@@ -43,9 +43,7 @@ const Sidebar = ({ onUpload }) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (!drop.current.contains(e.relatedTarget)) {
-      setIsDropping(true);
-    }
+    setIsDropping(true);
   };
 
   const handleDragLeave = (e) => {
@@ -53,15 +51,14 @@ const Sidebar = ({ onUpload }) => {
     e.stopPropagation();
 
     if (!drop.current.contains(e.relatedTarget)) {
-      setIsDropping(true);
+      setIsDropping(false);
     }
   };
-  console.log(droppedFiles);
 
   return (
     <div
-      className={`w-1/4 p-4 flex flex-col gap-5 justify-center items-center border-2 border-dashed border-blue-500 rounded-xl text-center text-lg overflow-y-auto pt-auto  ${
-        isDropping ? "shadow-inShadow" : null
+      className={`w-1/4 p-4 flex flex-col gap-5 justify-center items-center text-center text-lg overflow-y-auto pt-auto bg-darkBlue  ${
+        isDropping ? "shadow-inShado bg-lightBlue" : null
       }`}
       ref={drop}
     >

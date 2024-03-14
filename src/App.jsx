@@ -9,9 +9,9 @@ const App = () => {
   };
 
   return (
-    <div className="w-screen h-screen flex p-5 gap-5 bg-bgColor text-white font-Poppins">
+    <div className="w-screen h-screen flex gap-5 bg-bgColor text-white font-Poppins">
       <Sidebar onUpload={onUpload} />
-      <div className="flex flex-col justify-between w-full h-full">
+      <div className="flex flex-col justify-between w-full h-full p-10">
         <SoundComponent />
         <Timeline />
       </div>
