@@ -1,8 +1,60 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useContext } from "react";
+import { FileContext } from "../App";
 import SoundPreview from "./SoundPreview";
 
-const Sidebar = ({ onUpload }) => {
+const Sidebar = () => {
+  const indexDB = (files) => {
+    const dbReq = indexedDB.open("AudioDatabase");
+
+    dbReq.onerror = (event) => {
+      console.error(`Database error: ${event.target.errorCode}`);
+    };
+    dbReq.onsuccess = (event) => {
+      const db = event.target.result;
+
+      files.forEach((file) => {
+        // console.log(file);
+        const transaction = db.transaction(["audios"], "readwrite");
+        const objectStore = transaction.objectStore("audios");
+
+        const reqCheck = objectStore.get(file.name);
+
+        reqCheck.onsuccess = (event) => {
+          if (event.target.result) {
+            console.log("File already exists!");
+          } else {
+            const reqAdd = objectStore.add(file);
+
+            reqAdd.onsuccess = (event) => {
+              console.log("File Added!");
+            };
+
+            reqAdd.onerror = (event) => {
+              console.log(event.target.error);
+            };
+          }
+        };
+
+        reqCheck.onerror = (event) => {
+          console.log("Error checking if file exists:", event.target.error);
+        };
+      });
+    };
+
+    dbReq.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains("audios")) {
+        const objectStore = db.createObjectStore("audios", {
+          autoIncrement: true,
+        });
+        objectStore.createIndex("name", "name", { unique: true });
+      }
+    };
+  };
+
   const drop = useRef(null);
+  const contextFiles = useContext(FileContext);
+  // console.log(contextFiles);
   const [droppedFiles, setDroppedFiles] = useState([]);
   const [isDropping, setIsDropping] = useState(false);
 
@@ -20,7 +72,8 @@ const Sidebar = ({ onUpload }) => {
     };
   }, []);
 
-  useEffect(() => onUpload(droppedFiles), [droppedFiles]);
+  // useEffect(() => onUpload(droppedFiles), [droppedFiles]);
+  useEffect(() => indexDB(droppedFiles), [droppedFiles]);
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -34,7 +87,13 @@ const Sidebar = ({ onUpload }) => {
     const { files } = e.dataTransfer;
 
     setDroppedFiles((prevFiles) => {
-      return [...prevFiles, ...files];
+      const newFiles = Array.from(files).filter((file) => {
+        return !prevFiles.some(
+          (existingFile) => existingFile.name === file.name
+        );
+      });
+
+      return [...prevFiles, ...newFiles];
     });
     setIsDropping(false);
   };
@@ -55,6 +114,13 @@ const Sidebar = ({ onUpload }) => {
     }
   };
 
+  useEffect(() => {
+    setDroppedFiles((prev) => {
+      return [...prev, ...contextFiles];
+    });
+  }, [contextFiles]);
+
+  // console.log(droppedFiles);
   return (
     <div
       className={`w-1/4 p-4 flex flex-col gap-5 justify-center items-center text-center text-lg overflow-y-auto pt-auto bg-darkBlue  ${
