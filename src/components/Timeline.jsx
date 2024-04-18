@@ -23,11 +23,12 @@ const Timeline = () => {
   // console.log(draggedFileNames);
   return (
     <div
-      className="w-full bg-darkBlue px-5 py-10 rounded-xl"
+      className="w-full bg-darkBlue px-5 py-10 rounded-xl h-64"
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
-      Timeline
+      <div>Buttons</div>
+      <div>Pills</div>
     </div>
   );
 };

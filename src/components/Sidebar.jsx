@@ -12,14 +12,13 @@ const Sidebar = () => {
     dbReq.onsuccess = (event) => {
       const db = event.target.result;
 
-      files.forEach((file) => {
-        // console.log(file);
+      files.forEach(async (file) => {
         const transaction = db.transaction(["audios"], "readwrite");
         const objectStore = transaction.objectStore("audios");
 
-        const reqCheck = objectStore.get(file.name);
-
-        reqCheck.onsuccess = (event) => {
+        const reqCheck = await objectStore.index("name").get(file.name);
+        // console.log(reqCheck);
+        reqCheck.onsuccess = async (event) => {
           if (event.target.result) {
             console.log("File already exists!");
           } else {

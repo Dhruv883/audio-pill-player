@@ -7,9 +7,19 @@ const SoundPreview = ({ name, file }) => {
     e.dataTransfer.setData("text/plain", name);
   };
 
+  // const audio = new Audio(URL.createObjectURL(file));
+  // const handleMouseEnter = () => {
+  //   audio.play();
+  // };
+
+  // const handleMouseLeave = () => {
+  //   audio.pause();
+  //   audio.currentTime = 0;
+  // };
+
   return (
     <div
-      className="w-4/5 rounded-lg flex flex-col border border-borderColor pb-2"
+      className="w-4/5 rounded-lg flex flex-col border border-purple pb-2"
       draggable="true"
       onDragStart={handleDragStart}
     >
